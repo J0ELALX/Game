@@ -15,14 +15,26 @@ export const avatarOptions = [
 ];
 
 const avatarMap = Object.fromEntries(avatarOptions.map(a => [a.key, a.icon]));
+const accessoryMap = {
+  hat: '🎩',
+  glasses: '🕶️',
+  cape: '🦸',
+};
 
-function Avatar({ emotion = 'neutral', avatarKey }) {
+function Avatar({ emotion = 'neutral', avatarKey, accessories = [] }) {
   const icon = avatarKey ? avatarMap[avatarKey] : avatarMap[emotion] || avatarMap.neutral;
   return (
     <div className="avatar-comic">
       <span className="avatar-emoji" role="img" aria-label={avatarKey || emotion}>
         {icon}
       </span>
+      {accessories.length > 0 && (
+        <div className="avatar-accessories">
+          {accessories.map(acc => (
+            <span key={acc} className="avatar-accessory" role="img" aria-label={acc}>{accessoryMap[acc]}</span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

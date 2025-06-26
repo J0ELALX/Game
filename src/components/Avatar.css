@@ -1,8 +1,10 @@
 .avatar-comic {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-bottom: 1.2rem;
+  position: relative;
 }
 .avatar-emoji {
   font-size: 4rem;
@@ -12,4 +14,18 @@
   padding: 0.5rem 1.2rem;
   border: 3px solid #ffeb3b;
   box-shadow: 2px 2px 0 #222;
+  z-index: 1;
+}
+.avatar-accessories {
+  display: flex;
+  gap: 0.5rem;
+  position: absolute;
+  top: 0.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.avatar-accessory {
+  font-size: 2rem;
+  filter: drop-shadow(1px 1px 0 #222);
 } 

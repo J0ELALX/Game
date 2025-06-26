@@ -4,7 +4,7 @@ import Scene from './components/Scene';
 import ScoreBoard from './components/ScoreBoard';
 import scenes from './data/scenes';
 import MiniGame from './components/MiniGame';
-import Avatar from './components/Avatar';
+import Avatar, { avatarOptions } from './components/Avatar';
 import Badges from './components/Badges';
 import PeerPressureMiniGame from './components/PeerPressureMiniGame';
 import './components/PeerPressureMiniGame.css';
@@ -12,8 +12,6 @@ import StressBusterMiniGame from './components/StressBusterMiniGame';
 import QuizBlitzMiniGame from './components/QuizBlitzMiniGame';
 import './components/StressBusterMiniGame.css';
 import './components/QuizBlitzMiniGame.css';
-import { avatarOptions } from './components/Avatar';
-import Confetti from './components/Confetti';
 import { stickers } from './components/stickers';
 import StickerAlbum from './components/StickerAlbum';
 import { Howl } from 'howler';
@@ -35,6 +33,14 @@ const POWER_UP_EVENTS = [
   { msg: 'You feel extra healthy today! +1 Health', effect: s => ({ ...s, health: s.health + 1 }) },
 ];
 
+const ACCESSORIES = ['hat', 'glasses', 'cape'];
+const SILLY_EVENTS = [
+  { msg: 'A dancing banana congratulates you! 🍌💃', accessory: 'hat' },
+  { msg: 'You get a superhero cape for your courage! 🦸', accessory: 'cape' },
+  { msg: 'You found cool shades! 😎', accessory: 'glasses' },
+  { msg: 'A comic POW! moment gives you a power boost! 💥', accessory: null },
+];
+
 const badgeSound = new Howl({ src: [require('./assets/badge.mp3')], volume: 0.5 });
 const stickerSound = new Howl({ src: [require('./assets/sticker.mp3')], volume: 0.5 });
 const winSound = new Howl({ src: [require('./assets/win.mp3')], volume: 0.5 });
@@ -44,6 +50,16 @@ function getRandomSticker(collected) {
   const available = stickers.filter(s => !collected.includes(s.key));
   if (available.length === 0) return null;
   return available[Math.floor(Math.random() * available.length)].key;
+}
+
+function SillyEventOverlay({ event, onClose }) {
+  if (!event) return null;
+  return (
+    <div className="silly-event-overlay" onClick={onClose}>
+      <div className="silly-event-bubble">{event.msg}</div>
+      <button className="comic-btn" style={{ marginTop: 16 }} onClick={onClose}>OK</button>
+    </div>
+  );
 }
 
 function App() {
@@ -62,22 +78,30 @@ function App() {
   const [newBadge, setNewBadge] = useState(null);
   const [motivation, setMotivation] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('neutral');
-  const [playerInfo, setPlayerInfo] = useState({ name: '', class: '', section: '', admission: '' });
-  const [infoComplete, setInfoComplete] = useState(false);
+  const [playerName, setPlayerName] = useState('');
+  const [playerClass, setPlayerClass] = useState('');
+  const [showPlayerForm, setShowPlayerForm] = useState(false);
   const [collectedStickers, setCollectedStickers] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [muted, setMuted] = useState(false);
-
-  const handleInfoChange = e => {
-    setPlayerInfo({ ...playerInfo, [e.target.name]: e.target.value });
-  };
-  const canStart = playerInfo.name && playerInfo.class && playerInfo.section && playerInfo.admission && infoComplete;
+  const [avatarAccessories, setAvatarAccessories] = useState([]);
+  const [sillyEvent, setSillyEvent] = useState(null);
 
   useEffect(() => {
     if (!muted) bgMusic.play();
     else bgMusic.pause();
     return () => bgMusic.stop();
   }, [muted]);
+
+  function maybeSillyEvent() {
+    if (Math.random() < 0.3) {
+      const event = SILLY_EVENTS[Math.floor(Math.random() * SILLY_EVENTS.length)];
+      setSillyEvent(event);
+      if (event.accessory && !avatarAccessories.includes(event.accessory)) {
+        setAvatarAccessories(accs => [...accs, event.accessory]);
+      }
+    }
+  }
 
   const handleChoice = (choiceIdx) => {
     const choice = scenes[sceneIdx].choices[choiceIdx];
@@ -112,6 +136,8 @@ function App() {
           setTimeout(() => setMotivation(''), 1500);
         }, 1600);
       }
+      // Silly event and accessory
+      maybeSillyEvent();
     }
     setScore(prev => {
       const newScore = {
@@ -163,6 +189,8 @@ function App() {
       setShowFact(MYTH_FACT_QUIZ.correctMsg);
       if (!badges.includes('mythBuster')) setBadges(b => [...b, 'mythBuster']);
       setAvatarEmotion('happy');
+      // Silly event and accessory
+      maybeSillyEvent();
     } else {
       setShowFact(MYTH_FACT_QUIZ.wrongMsg);
       setAvatarEmotion('worried');
@@ -218,31 +246,29 @@ function App() {
           <p className="comic-intro">
             Start your new school year as Alex! Make smart choices, face real-life challenges, and power up your health, confidence, and leadership. Are you ready to be a changemaker?
           </p>
-          <form className="player-info-form" onSubmit={e => { e.preventDefault(); setInfoComplete(true); }}>
-            <div className="player-info-row"><label>Name:</label><input name="name" value={playerInfo.name} onChange={handleInfoChange} required /></div>
-            <div className="player-info-row"><label>Class:</label><input name="class" value={playerInfo.class} onChange={handleInfoChange} required /></div>
-            <div className="player-info-row"><label>Section:</label><input name="section" value={playerInfo.section} onChange={handleInfoChange} required /></div>
-            <div className="player-info-row"><label>Admission No.:</label><input name="admission" value={playerInfo.admission} onChange={handleInfoChange} required /></div>
-            {!infoComplete && <button className="comic-btn" type="submit">Save Details</button>}
-          </form>
-          {infoComplete && <>
-            <div className="avatar-select-title">Choose your avatar:</div>
-            <div className="avatar-select-list">
-              {avatarOptions.map(opt => (
-                <button
-                  key={opt.key}
-                  className={`avatar-select-btn${selectedAvatar === opt.key ? ' selected' : ''}`}
-                  onClick={() => setSelectedAvatar(opt.key)}
-                >
-                  <span role="img" aria-label={opt.label} style={{ fontSize: '2rem' }}>{opt.icon}</span>
-                  <div style={{ fontSize: '0.9rem' }}>{opt.label}</div>
-                </button>
-              ))}
-            </div>
-            <button className="comic-btn" onClick={() => setStarted(true)} disabled={!canStart}>
-              Start Game
-            </button>
-          </>}
+          <div className="avatar-select-title">Choose your avatar:</div>
+          <div className="avatar-select-list">
+            {avatarOptions.map(opt => (
+              <button
+                key={opt.key}
+                className={`avatar-select-btn${selectedAvatar === opt.key ? ' selected' : ''}`}
+                onClick={() => setSelectedAvatar(opt.key)}
+              >
+                <span role="img" aria-label={opt.label} style={{ fontSize: '2rem' }}>{opt.icon}</span>
+                <div style={{ fontSize: '0.9rem' }}>{opt.label}</div>
+              </button>
+            ))}
+          </div>
+          <button className="comic-btn" onClick={() => setShowPlayerForm(true)}>
+            Start Game
+          </button>
+          {showPlayerForm && (
+            <form className="player-info-form" onSubmit={e => { e.preventDefault(); setStarted(true); }}>
+              <div className="player-info-row"><label>Name:</label><input name="name" value={playerName} onChange={e => setPlayerName(e.target.value)} required /></div>
+              <div className="player-info-row"><label>Class:</label><input name="class" value={playerClass} onChange={e => setPlayerClass(e.target.value)} required /></div>
+              <button className="comic-btn" type="submit" disabled={!playerName || !playerClass}>Continue</button>
+            </form>
+          )}
         </div>
       ) : gameOver ? (
         <div className="end-screen">
@@ -261,7 +287,7 @@ function App() {
         </div>
       ) : (
         <>
-          <Avatar emotion={avatarEmotion} avatarKey={selectedAvatar} />
+          <Avatar emotion={avatarEmotion} avatarKey={selectedAvatar} accessories={avatarAccessories} />
           <ScoreBoard score={score} animateScore={animateScore} />
           {motivation && <div className="motivation-pop">{motivation}</div>}
           {showPeerMiniGame ? (
@@ -283,6 +309,7 @@ function App() {
       )}
       <Badges badges={badges} newBadge={newBadge} />
       {showConfetti && <Confetti />}
+      {sillyEvent && <SillyEventOverlay event={sillyEvent} onClose={() => setSillyEvent(null)} />}
     </div>
   );
 }
