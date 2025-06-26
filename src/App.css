@@ -165,3 +165,14 @@
   margin-bottom: 1.2rem;
   text-align: center;
 }
+
+.mapgame-fullscreen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(135deg, #fffbe7, #fffbe7 60px, #ffe082 60px, #ffe082 120px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}

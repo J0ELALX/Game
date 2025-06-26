@@ -27,6 +27,10 @@
   color: #f57c00;
 }
 
+.score-item.points span {
+  color: #8e24aa;
+}
+
 .score-animate {
   animation: score-bounce 0.7s;
   box-shadow: 0 0 12px 4px #ffeb3b;

@@ -1,0 +1,81 @@
+.mapgame-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+.mapgame-points {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #8e24aa;
+}
+.mapgame-grid {
+  display: flex;
+  flex-direction: column;
+  border: 4px solid #ffeb3b;
+  background: #fffbe7;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 #222;
+}
+.mapgame-row {
+  display: flex;
+}
+.mapgame-cell {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid #bbb;
+  background: #ffe082;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+  user-select: none;
+}
+.mapgame-cell:not(.revealed) {
+  background: #bdbdbd;
+  border: 1.5px solid #888;
+  color: #888;
+  cursor: pointer;
+}
+.mapgame-cell.revealed {
+  background: #fffde7;
+  border: 1.5px solid #ffeb3b;
+  color: #222;
+}
+.mapgame-cell.player {
+  background: #8e24aa;
+  color: #fff;
+  font-size: 1.5rem;
+  border: 2.5px solid #222;
+  z-index: 2;
+}
+.mapgame-cell.goal {
+  background: #43a047;
+  color: #fff;
+  font-size: 1.5rem;
+  border: 2.5px solid #222;
+  z-index: 2;
+}
+.mapgame-message {
+  margin-top: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1976d2;
+  background: #fffbe7;
+  border: 2px solid #ffeb3b;
+  border-radius: 10px;
+  padding: 0.7rem 1.5rem;
+  box-shadow: 2px 2px 0 #ffeb3b;
+}
+.mapgame-help {
+  margin-top: 1.2rem;
+  font-size: 1rem;
+  color: #555;
+  background: #fffde7;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  border: 1.5px solid #ffeb3b;
+} 

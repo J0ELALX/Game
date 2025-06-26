@@ -15,6 +15,8 @@ import './components/QuizBlitzMiniGame.css';
 import { stickers } from './components/stickers';
 import StickerAlbum from './components/StickerAlbum';
 import { Howl } from 'howler';
+import Confetti from './components/Confetti';
+import MapGame from './components/MapGame';
 
 const TITLE = "Power Up: The Smart Choice Adventure";
 
@@ -44,7 +46,6 @@ const SILLY_EVENTS = [
 const badgeSound = new Howl({ src: [require('./assets/badge.mp3')], volume: 0.5 });
 const stickerSound = new Howl({ src: [require('./assets/sticker.mp3')], volume: 0.5 });
 const winSound = new Howl({ src: [require('./assets/win.mp3')], volume: 0.5 });
-const bgMusic = new Howl({ src: [require('./assets/bg-music.mp3')], loop: true, volume: 0.2 });
 
 function getRandomSticker(collected) {
   const available = stickers.filter(s => !collected.includes(s.key));
@@ -83,15 +84,13 @@ function App() {
   const [showPlayerForm, setShowPlayerForm] = useState(false);
   const [collectedStickers, setCollectedStickers] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [muted, setMuted] = useState(false);
   const [avatarAccessories, setAvatarAccessories] = useState([]);
   const [sillyEvent, setSillyEvent] = useState(null);
-
-  useEffect(() => {
-    if (!muted) bgMusic.play();
-    else bgMusic.pause();
-    return () => bgMusic.stop();
-  }, [muted]);
+  const [points, setPoints] = useState(0);
+  const [showPointsPopup, setShowPointsPopup] = useState(null);
+  const [showMapGame, setShowMapGame] = useState(false);
+  const [mapGameResult, setMapGameResult] = useState(null);
+  const [mapGoal, setMapGoal] = useState([9, 9]);
 
   function maybeSillyEvent() {
     if (Math.random() < 0.3) {
@@ -154,6 +153,9 @@ function App() {
       return newScore;
     });
     setShowFact(choice.fact);
+    setPoints(prev => prev + (choice.points || 0));
+    setShowPointsPopup(choice.points || 0);
+    setTimeout(() => setShowPointsPopup(null), 1200);
     setTimeout(() => {
       setShowFact(null);
       if (sceneIdx === 1) {
@@ -174,6 +176,10 @@ function App() {
 
   const handlePeerMiniGameResult = (fast) => {
     setShowPeerMiniGame(false);
+    let pts = fast ? 10 : 5;
+    setPoints(prev => prev + pts);
+    setShowPointsPopup(pts);
+    setTimeout(() => setShowPointsPopup(null), 1200);
     if (fast) {
       setScore(prev => ({ ...prev, social: prev.social + 2 }));
       setMotivation('Awesome! You dodged peer pressure!');
@@ -184,12 +190,15 @@ function App() {
 
   const handleMiniGameResult = (correct) => {
     setShowMiniGame(false);
+    let pts = correct ? 10 : 0;
+    setPoints(prev => prev + pts);
+    setShowPointsPopup(pts);
+    setTimeout(() => setShowPointsPopup(null), 1200);
     if (correct) {
       setScore(prev => ({ ...prev, mental: prev.mental + 2 }));
       setShowFact(MYTH_FACT_QUIZ.correctMsg);
       if (!badges.includes('mythBuster')) setBadges(b => [...b, 'mythBuster']);
       setAvatarEmotion('happy');
-      // Silly event and accessory
       maybeSillyEvent();
     } else {
       setShowFact(MYTH_FACT_QUIZ.wrongMsg);
@@ -210,11 +219,18 @@ function App() {
     setScore(prev => ({ ...prev, mental: prev.mental + 2 }));
     setMotivation('You calmed your mind! +2 Mental Strength');
     setTimeout(() => setMotivation(''), 1500);
+    setPoints(prev => prev + 10);
+    setShowPointsPopup(10);
+    setTimeout(() => setShowPointsPopup(null), 1200);
     setSceneIdx(sceneIdx + 1);
   };
 
   const handleQuizMiniGameResult = (score) => {
     setShowQuizMiniGame(false);
+    let pts = score === 2 ? 10 : score === 1 ? 5 : 0;
+    setPoints(prev => prev + pts);
+    setShowPointsPopup(pts);
+    setTimeout(() => setShowPointsPopup(null), 1200);
     if (score === 2) {
       setScore(prev => ({ ...prev, mental: prev.mental + 2, health: prev.health + 2 }));
       setMotivation('Quiz Master! +2 Health, +2 Mental Strength');
@@ -224,8 +240,21 @@ function App() {
     }
     setTimeout(() => {
       setMotivation('');
-      setGameOver(true);
+      // Randomize vape-free zone location (not at start)
+      let gx, gy;
+      do {
+        gx = Math.floor(Math.random() * 10);
+        gy = Math.floor(Math.random() * 10);
+      } while ((gx === 0 && gy === 0));
+      setMapGoal([gx, gy]);
+      setShowMapGame(true);
     }, 1800);
+  };
+
+  const handleMapGameFinish = (win) => {
+    setShowMapGame(false);
+    setMapGameResult(win);
+    setGameOver(true);
   };
 
   const handleRestart = () => {
@@ -244,7 +273,7 @@ function App() {
         <div className="intro-screen">
           <h1 className="comic-title">{TITLE}</h1>
           <p className="comic-intro">
-            Start your new school year as Alex! Make smart choices, face real-life challenges, and power up your health, confidence, and leadership. Are you ready to be a changemaker?
+            Start your new school year as Jordan! Make smart choices, face real-life challenges, and power up your health, confidence, and leadership. Are you ready to be a changemaker?
           </p>
           <div className="avatar-select-title">Choose your avatar:</div>
           <div className="avatar-select-list">
@@ -272,23 +301,26 @@ function App() {
         </div>
       ) : gameOver ? (
         <div className="end-screen">
-          <h2 className="comic-title">Congratulations, Changemaker!</h2>
+          <h2 className="comic-title">{mapGameResult ? 'Congratulations, Changemaker!' : 'Better Luck Next Time!'}</h2>
           <p className="comic-intro">
-            You helped Alex make smart, strong choices and become a leader at school.<br/>
+            {mapGameResult
+              ? 'You reached the Vape-Free Zone! You made smart, strong choices and became a leader at school.'
+              : 'You ran out of points before reaching the Vape-Free Zone. Try again to make even smarter choices!'}
+            <br/>
             Remember: Saying "no" to drugs, vaping, and alcohol isn't just about avoiding harm—it's about powering up your health, confidence, and future.<br/>
             <b>Be the change. Inspire your friends. You have the power!</b>
           </p>
           <Badges badges={badges} />
-          <button className="comic-btn" onClick={handleRestart}>Play Again</button>
           <StickerAlbum collectedStickers={collectedStickers} />
-          <button className="comic-btn" onClick={() => setMuted(!muted)}>
-            {muted ? 'Unmute Music' : 'Mute Music'}
-          </button>
+          <button className="comic-btn" onClick={handleRestart}>Play Again</button>
         </div>
       ) : (
         <>
           <Avatar emotion={avatarEmotion} avatarKey={selectedAvatar} accessories={avatarAccessories} />
-          <ScoreBoard score={score} animateScore={animateScore} />
+          {showPointsPopup !== null && (
+            <div className="points-popup">{showPointsPopup > 0 ? `+${showPointsPopup}` : '+0'} Points!</div>
+          )}
+          <ScoreBoard score={score} animateScore={animateScore} points={points} />
           {motivation && <div className="motivation-pop">{motivation}</div>}
           {showPeerMiniGame ? (
             <PeerPressureMiniGame onResult={handlePeerMiniGameResult} />
@@ -310,6 +342,11 @@ function App() {
       <Badges badges={badges} newBadge={newBadge} />
       {showConfetti && <Confetti />}
       {sillyEvent && <SillyEventOverlay event={sillyEvent} onClose={() => setSillyEvent(null)} />}
+      {showMapGame ? (
+        <div className="mapgame-fullscreen">
+          <MapGame points={points} onFinish={handleMapGameFinish} goal={mapGoal} />
+        </div>
+      ) : null}
     </div>
   );
 }
