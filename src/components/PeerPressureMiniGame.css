@@ -1,0 +1,47 @@
+.peer-btn {
+  min-width: 120px;
+  font-size: 1.3rem;
+  background: #ff7043;
+  color: #fff;
+  border: 2px solid #222;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 #222;
+  margin-top: 1.2rem;
+}
+.mini-game-wait {
+  font-size: 1.2rem;
+  color: #888;
+  margin: 1.5rem 0;
+}
+.mini-game-panel {
+  background: #e3f2fd;
+  border: 3px solid #1976d2;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #222;
+  padding: 2rem;
+  margin: 2rem 0;
+  max-width: 500px;
+  text-align: center;
+}
+.mini-game-question {
+  font-size: 1.3rem;
+  color: #1976d2;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.mini-game-statement {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 2px solid #1976d2;
+}
+.mini-game-result {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #388e3c;
+  margin-top: 1rem;
+  animation: pop 0.5s;
+} 

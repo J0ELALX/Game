@@ -1,0 +1,15 @@
+.avatar-comic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+.avatar-emoji {
+  font-size: 4rem;
+  text-shadow: 2px 2px 0 #ffeb3b, 4px 4px 0 #222;
+  border-radius: 50%;
+  background: #fffbe7;
+  padding: 0.5rem 1.2rem;
+  border: 3px solid #ffeb3b;
+  box-shadow: 2px 2px 0 #222;
+} 

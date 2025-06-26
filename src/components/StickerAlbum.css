@@ -1,0 +1,42 @@
+.sticker-album-comic {
+  background: #fffbe7;
+  border: 3px solid #ffeb3b;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #222;
+  padding: 1.2rem 2rem;
+  margin: 2rem 0;
+  max-width: 520px;
+  text-align: center;
+}
+.sticker-album-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.sticker-album-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f7f7f7;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  padding: 0.7rem 1.1rem;
+  min-width: 70px;
+  opacity: 0.4;
+  transition: opacity 0.2s, border 0.2s;
+}
+.sticker-album-item.collected {
+  border: 2px solid #43a047;
+  opacity: 1;
+  box-shadow: 0 0 8px 2px #43a04744;
+}
+.sticker-album-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.2rem;
+}
+.sticker-album-name {
+  font-size: 0.9rem;
+  color: #222;
+} 

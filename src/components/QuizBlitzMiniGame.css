@@ -1,0 +1,10 @@
+.quiz-btn {
+  min-width: 120px;
+  font-size: 1.1rem;
+  background: #ffd54f;
+  color: #222;
+  border: 2px solid #222;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 #222;
+  margin-bottom: 0.7rem;
+} 

@@ -1,0 +1,53 @@
+.certificate-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+.certificate-comic {
+  background: #fffbe7;
+  border: 4px solid #ffeb3b;
+  border-radius: 18px;
+  box-shadow: 6px 6px 0 #222;
+  padding: 2.5rem 3rem;
+  max-width: 420px;
+  text-align: left;
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+  margin-bottom: 1.2rem;
+}
+.cert-row {
+  font-size: 1.1rem;
+  margin-bottom: 0.7rem;
+}
+.cert-badges {
+  display: inline-flex;
+  gap: 0.7rem;
+  margin-left: 0.5rem;
+}
+.cert-badge {
+  font-size: 1.7rem;
+}
+.cert-congrats {
+  margin-top: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1976d2;
+}
+.print-btn {
+  margin-top: 0.5rem;
+}
+@media print {
+  .print-btn, .comic-btn, .end-screen button, .motivation-pop, .avatar-select-list, .avatar-select-title, .scoreboard, .badges-comic {
+    display: none !important;
+  }
+  .certificate-area {
+    margin: 0;
+  }
+  .certificate-comic {
+    box-shadow: none;
+    border: 2px solid #222;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+  }
+} 
